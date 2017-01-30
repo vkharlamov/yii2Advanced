@@ -18,7 +18,7 @@ use yii\db\ActiveRecord;
 //use vendor\cebe\markdown\Markdown;
 
 
-class postBehavior extends Behavior {
+class markdownBehavior extends Behavior {
 	//put your code here
 
 	public $fromAttr;
@@ -67,14 +67,16 @@ class postBehavior extends Behavior {
 	 */
 	public function onBeforeValidate($event) {
 		$model = $this->owner;
-		$model->{$this->toAttr} = 'init';
+//		$model->{$this->toAttr} = 'init';
 	}
 
 	public function onBeforeSave($event) {
 		$model = $this->owner;
 		$parser = new \cebe\markdown\Markdown();
-
-		// put parsed string to model field 'text_html'
+//		var_dump($model);
+//		var_dump($this->toAttr);
+//		die();
+		// put parsed string to model field text_html
 		$model->{$this->toAttr} = $parser->parse($model->{$this->fromAttr});
 
 	}

@@ -8,7 +8,7 @@ use Yii;
 use yii\base\InvalidParamException;
 
 use yii\db\ActiveRecord;
-use yii\web\IdentityInterfac;
+use yii\web\IdentityInterface;
 
 /**
  * ContactForm is the model behind the contact form.
@@ -34,8 +34,8 @@ class Contact extends ActiveRecord
         return [
             // name, email, subject and body are required
 //            [['name', 'email', 'subject', 'body'], 'required'],
-            [['text', 'text_html'], 'required'],
-//            [['text'], 'required'],
+//            [['text', 'text_html'], 'required'],
+            [['text'], 'required'],
             // email has to be a valid email address
 //            ['email', 'email'],
             // verifyCode needs to be entered correctly
@@ -85,18 +85,19 @@ class Contact extends ActiveRecord
 	public function behaviors()
     {
         return [
-//			'mymark' => [
-//				'class' => 'common\behaviors\postBehavior',
-//				'fromAttr' => 'text',
-//				'toAttr' => 'text_html'
+			'mymark' => [
+				'class' => 'common\behaviors\markdownBehavior',
+				'fromAttr' => 'text',
+				'toAttr' => 'text_html'
+			],
+//			'fileBehavior' => [
+//
 //			]
         ];
     }
-	 /**
-     * @inheritdoc
-     */
-//    public function getId()
-//    {
-//        return $this->getPrimaryKey();
-//    }
+
+	public function toArray(array $fields = array(), array $expand = array(), $recursive = true) {
+
+	}
+
 }

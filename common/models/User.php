@@ -26,6 +26,11 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
 
+	/**
+	 * user vova5
+	 * pass demo
+	 */
+
 //	 private static $users = [
 //        '100' => [
 //            'id' => '100',
@@ -46,14 +51,15 @@ class User extends ActiveRecord implements IdentityInterface
 
 /**
  * My custom event to use from config
+ * Update last login
  *
  */
 public static function updateLastLogin(\yii\web\UserEvent $event) {
-//	$user = $event->identity;
+	$user = $event->identity;
 //	print_r(__METHOD__);
 //	var_dump($user);
 //	die();
-//	$user->updateAttributes(['logged_at' => time()]);
+	$user->updateAttributes(['logged_at' => time()]);
 }
 
 /**
@@ -74,13 +80,27 @@ public static function updateLastLogin(\yii\web\UserEvent $event) {
 //          [
 //				TimestampBehavior::className()],
 //			[
-//				'class' => 'frontend\components\postBehavior',
+//				'class' => 'frontend\components\markdownBehavior',
 //				'fromAttr' => 'text',
 //				'toAttr' => 'text_html']
 		];
 	}
 
-    /**
+	public function getPayment() {
+
+		return $this->hasMany(\frontend\models\Agreement::className(), ['user_id' => 'id']);
+	}
+	public function getPaymentAggregation() {
+		return $this->getPayment()
+				->select(['user_id', 'amountSum'=> 'SUM(payment)'])
+				->groupBy('user_id')
+				->asArray(true);
+	}
+	public function getAmountSum() {
+		return $this->paymentAggregation[0]['amountSum'];
+	}
+
+	/**
      * @inheritdoc
      */
     public function rules()

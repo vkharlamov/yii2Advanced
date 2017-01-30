@@ -34,12 +34,12 @@ class MyBootstrapNotificator implements BootstrapInterface {
 	}
 
 	public function oneBootstrapHandler(\yii\base\Event $event){
-		echo '<-----ADD events for Class Loader ' . __CLASS__ . '---- >';
+		echo '<-----RISE  event for Class Loader ' . __CLASS__ . '---- >';
 		var_dump(__FUNCTION__);
 	}
 
 	public function twoBootstrapHandler(\yii\base\Event $event){
-		echo '<-----ADD events for Class Loader ' . __CLASS__ . '---- >';
+		echo '<-----RISE  event for Class Loader ' . __CLASS__ . '---- >';
 		var_dump(__FUNCTION__);
 	}
 }

@@ -50,10 +50,8 @@ class forclassBehavior extends Behavior {
 	public function events() {
 		return [
 			yii\web\Controller::EVENT_BEFORE_ACTION => 'onBeforeAction1',
-			//yii\base\Controller::EVENT_BEFORE_ACTION => 'onBeforeAction1'
 		];
 	}
-
 
 	/**
 	 *
@@ -63,6 +61,7 @@ class forclassBehavior extends Behavior {
 	public function onBeforeAction1($event) {
 //		$model = $this->owner;
 		Yii::info(__FUNCTION__ , 'binary');
+		echo '<br> RISEd ' . __METHOD__ . '<br>';
 	}
 
 }

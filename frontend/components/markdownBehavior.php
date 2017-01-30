@@ -22,8 +22,9 @@ use yii\base\Behavior;
 //use vendor\cebe\markdown\Markdown;
 
 
-
-class postBehavior extends Behavior {
+// MarkdownBehavior in lesson
+//class postBehavior extends Behavior {
+class markdownBehavior extends Behavior {
 	//put your code here
 
 	public $fromAttr;
@@ -89,7 +90,7 @@ class postBehavior extends Behavior {
 //return true;
 		var_dump($model->{$this->toAttr});
 
-		die();
+//		die();
 	}
 }
 

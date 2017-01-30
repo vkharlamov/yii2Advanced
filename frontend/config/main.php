@@ -6,12 +6,12 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
-// Test behavior for Class via container
-//Yii::$container->set(yii\web\Controller::className(), [
-//	'as behaviorViaContainer' => [
-//		'class' => 'common\behaviors\forclassBehavior',
-//	]
-//]);
+// Add behavior for Class via container
+Yii::$container->set(frontend\controllers\TestController::className(), [
+	'as behaviorViaContainer' => [
+		'class' => 'common\behaviors\forclassBehavior',
+	]
+]);
 
 
 return [
@@ -19,6 +19,8 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
 		'log',
+
+		// Init bootstrap object to add closure for "Loader" class
 		'\frontend\components\MyBootstrapNotificator'
 	],
 
@@ -32,25 +34,36 @@ return [
     'components' => [
         'user' => [
             'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-			'on afterLogin' => ['\common\models\User', 'updateLastLogin'],
+//            'enableAutoLogin' => true,
+
+//			'on afterLogin' => ['\common\models\User', 'updateLastLogin'], // add event ONLY ONE!
+
+			// to add !Several! actions for a ONE event USE BEHAVIORs
+			'as afterLogin1' => [
+				'class' => 'common\behaviors\lastLoginBehavior1',
+				'attribute' => 'logged_at'
+			],
+			'as afterLogin2' => [
+				'class' => 'common\behaviors\lastLoginBehavior2',
+				'attribute' => 'updated_at'
+			]
         ],
-		'MyComponent' => [
+		'loaderComponent' => [
             'class' => 'frontend\components\Loader',
 			'config' => ['firstParamValue', 'secondParamValue'],
 			'on succsess' => function (\yii\base\Event $event) {
-				print_r(__FUNCTION__);
-				echo '<br>  -on succsess- FROM CONFIG  ========== sender OBJ';
-				var_dump($event->sender);
-				echo '<br>  END FROM CONFIG ';
+				echo '<hr>RISE Handler 1 <br> : ' . __FILE__ ;
+
+//				var_dump($event->sender);
+				echo"<br>END Rise on succsess handler from   <br>" . __FILE__;
 			}
 		],
 
 		'db'=>array(
 //            'connectionString' => 'mysql:host=localhost;dbname=test',
-        'emulatePrepare' => true,
-        'username' => 'root',
-        'password' => '123456',
+			'emulatePrepare' => true,
+			'username' => 'root',
+			'password' => '123456',
         ),
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -59,9 +72,7 @@ return [
 				[
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning','info'],
-                    'categories' => ['binary'],
-					'logVars' => [],
-                    'logFile' => '@frontend/runtime/logs/mylog.log',
+//                    'logFile' => '@frontend/runtime/logs/mylog.log',
                 ],
             ],
         ],

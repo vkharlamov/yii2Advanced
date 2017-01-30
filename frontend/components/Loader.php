@@ -26,37 +26,36 @@ class Loader extends Component {
 	}
 
 	public function init() {
-//		var_dump(__FUNCTION__);
-//		echo('<br/>');
-
-//		Yii::info(__FUNCTION__,'my_category');
-
 
 		//Здесь мы производим инициализацию компонента, необходимые действия
 		$this->on($this::EVENT_SUCCSESS, [$this, 'inComponentHandler']);
+
 		parent::init();
 	}
 
 
 	public  function inComponentHandler(\yii\base\Event $event) {
-		echo '<hr>INIT COMPONENT<br>$event->handler via this : ' . __METHOD__;
-		var_dump($event);
+		echo '<hr>RISE Handler 2<br> : ' . __METHOD__;
+//		echo '<br> has Event obj in param';
+//		var_dump($event);
+		echo '<br>END  Handle 2' . __METHOD__;
 	}
-	public  function hello() {
-		echo 'Hello SOSISKA!';
-//		var_dump(\Yii::$app->params);
-//		var_dump(\Yii::$app->runtimePath);
 
-	}
+
 	public  function load($url) {
 
+//	echo '<hr> '. __METHOD__ . '<br>';
+
 		if($url == 'test.lo') {
-			$this->response = 'ok????';
+			$this->response = "requested url = $url";
 			$event = new LoaderEvent();
-			$event->errorMessage = '<br>$event->errorMessage';
-			echo '<hr><br>LoaderEvent obj: ';
-			var_dump($event);
+			$event->errorMessage = '$event->errorMessage - OK!';
+
+
+			echo '<br><br><br><br><br>--- TRIGGER  EVENT_SUCCSESS --<br>';
 			$this->trigger(self::EVENT_SUCCSESS, $event);
+			echo '<br>--- END TRIGGER  EVENT_SUCCSESS --<br>';
+
 		} else {
 			$this->response = 'error!';
 			$event = new LoaderEvent();

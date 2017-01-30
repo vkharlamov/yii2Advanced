@@ -8,6 +8,11 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\Contact;
+
+use frontend\models\Agreement;
+
+
+
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -41,49 +46,46 @@ class SiteController extends Controller
 	public function actionClosure()
     {
 
-		$resp = Yii::$app->MyComponent->hello();
 //
 //		Load from config
-		$loader = Yii::$app->MyComponent;
-		echo 'CLASSNAMe------------------';
-		var_dump($loader::className());
+		$loaderObject = Yii::$app->loaderComponent;
 
 // load class by hand
 //		Yii::setAlias('@component', '@frontend/components');
 //		var_dump(Yii::getAlias('@component'));
 //		$path = Yii::getAlias('@component/Loader.php');
 //		require_once($path);
-//		$loader = new Loader();
+//		$loaderObject = new Loader();
 
 
-//		var_dump($loader);
-//		die();
+// Add handlers for $loader Component
 
+		// Handler via Closure
 		$attach = ['one','three'];
-		$loader->on($loader::EVENT_SUCCSESS, function($event){
+		$loaderObject->on($loaderObject::EVENT_SUCCSESS, function($event){
 
-//			$event->handled = true; // to stop execution event handlers
-			echo $event->sender->response;
-			echo $event->errorMessage;
+//			$event->handled = true; // to stop execution next event handlers
+//			echo $event->sender->response;
+//			echo $event->errorMessage;
 
 			// access to attach
-			echo '<hr>CLOSURE with @false@ to add handler first <br>$event->data 1: '. __METHOD__;
-			var_dump($event->data);
-		},$attach,
-				true);// false - to add handler first
+			echo '<hr> RISE Handler 3 <br> via Closure: '. __METHOD__;
+//			var_dump($event->data);
+		}, $attach, true);// false - to add handler first
 
-		$loader->on($loader::EVENT_SUCCSESS, [$this, 'inClassHandler']);
+		// Handler with local handler
+		$loaderObject->on($loaderObject::EVENT_SUCCSESS, [$this, 'inClassHandler']);
 
-		$loader->load('test.lo');
+		// Do Request
+		$resp = $loaderObject->load('test.lo');
         return $this->render('test', [
 			'from Component Loader' => $resp
 		]);
     }
 
 	protected function inClassHandler(){
-			echo '<hr><br>inClassHandler $event->handler via this : ' . __METHOD__;
+			echo '<hr>RISE Handler 4 <br> inClassHandler $event->handler via this : ' . __METHOD__;
 			echo '<hr>';
-//			var_dump($event->data);
 	}
 
 	/**
@@ -190,42 +192,56 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
+		if (!Yii::$app->user->isGuest) {
+			Yii::$app->user->logout();
+			return $this->goHome();
+		}
     }
 
 	public function actionBehavior() {
 
-		Yii::info(__FUNCTION__, 'binary');
+//		Yii::info(__FUNCTION__, 'binary');
 
 		  $model = new Contact();
 
 //		  $res = Contact::findOne(48);
 
-//		  $res = $model->find()->asArray()->all();
-		  foreach ($model->find()->batch(2) as $res) {
+		  $res = $model->find()->asArray()->all();
+		  foreach ($model->find()->batch(3) as $res) {
 			// $customer is a Customer object
 
 			echo '<hr>';
-
-			foreach ($res as $key1=>$val) {
-//				print '<br>'; var_dump($key1);
-//				print '<br>'; var_dump($val);
-
-				foreach ($val as $k=>$v) {
-
-//					var_dump($k);
-//					var_dump($v);
-
-				}
-
-			}
+			$r[] = $res;
+//			foreach ($res as $val) {
+//				print '<br>'; var_dump($val->id);
+//			}
 		}
-
+			return $this->render('test', [
+                'test' => $r,
+            ]);
 	}
 
-    /**
+	public function actionTest() {
+
+//		$res = User::find()
+//				->with(['paymentAggregation'])
+//				->all();
+
+//
+		$res = User::findOne(5);
+//				->amountSum; // virtual field in model
+
+		return $this->render('test', [
+                'test' => $res,
+            ]);
+
+//		$res = Agreement::getScoring();
+//		var_dump($res);
+//		return $this->render('test', [
+//                'test' => $res,
+//            ]);
+	}
+	/**
      * Displays contact page.
      *
      * @return mixed
@@ -245,7 +261,7 @@ class SiteController extends Controller
 //			var_dump(Yii::$app->request->post());
 //			var_dump($model);
 //			die();
-			$model->user_id = 99;
+
 
 			 if(!$model->save()){
 				  print_r($model->getErrors());
